@@ -23,6 +23,7 @@ create dir /home/monitor/src/
 
 create crontab entry
 	0,10,20,30,40,50 * * * * * /home/monitor/src/my_memory_check
+  */10 * * * * * /home/monitor/src/my_memory_check
 
 Set time zone to PHT for server
 Set hostname to bpx.server.local
