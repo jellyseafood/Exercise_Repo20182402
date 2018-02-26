@@ -1,0 +1,8 @@
+set smtp-use-starttls
+set smtp=smtp://smtp.gmail.com:587
+set smtp-auth=login
+set smtp-auth-user=nestor.gramata.jr@gmail.com
+set smtp-auth-password=blahblahyey
+set from=nestor.gramata.jr@gmail.com
+set ssl-verify=ignore
+set nss-config-dir=~/.mozilla/firefox/7gb1cv25.default/

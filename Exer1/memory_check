@@ -15,11 +15,13 @@ unset email_add
 
 
 #=========START functions / subroutines==========
+# Function: my_help ()
+# -- display to help user understand how to use program
 function my_help () {
   echo "Invalid/Incomplete parameters..."
   echo "The required parameters are:"
-  echo "  -c    critical threshold \(percentage\)"
-  echo "  -w    warning threshold \(percentage\)"
+  echo "  -c    critical threshold \(percentage\) -whole numbers only"
+  echo "  -w    warning threshold \(percentage\) -whole numbers only"
   echo "  -e    email address to notify"
   echo "Note on parameters:"
   echo "  -c  should be greater than -w"
@@ -32,15 +34,26 @@ function my_help () {
   echo "  e = $email_add"
 }
 
-function get_mem () {
+# Function: get_perc_used_mem ()
+# -- returns percentage memory usage
+function get_perc_used_mem () {
   total_memory=$( free | grep Mem: | awk '{ print $2 }' )
   used_memory=$( free | grep Mem: | awk '{ print $3 }' )
   echo $( expr $used_memory \* 100 / $total_memory )
 }
 
+# Function: notify_action (user_email)
+# -- sets the email subject to "YYYYMMDD HH:MM memory check - critical"
+# -- set email body to contain the top 10 memory consuming processes
+# -- sends an email to email_add provided
 function notify_action () {
-  echo ps proccesssssssss , top 10 desc by mem
-  echo setup smtp #TODO
+  email_add=$1
+  email_subj="$( date "+%Y%m%d %H:%M" ) memory check - critical"
+  # used awk as workaround to skip the header column when sorting
+  # used sed to make the email look more aligned without having to use html
+  email_body=$( ps -eo pmem,pid,comm | awk 'NR==1{print}{print | "sort -grk1 | head -n10"}' | sed 's/^ //' | sed -e "s/ \+/		/1 ; s/ \+/		/1" )
+  #below assumes that server has mailx installed and smtp settings are configured
+  echo "$email_body" | mail -v -s "$email_subj" "$1"
 }
 #=========END functions / subroutines==========
 
@@ -78,15 +91,15 @@ then
 fi
 
 # Calculate percentage used memory
-perc_used_mem=$( get_mem )
+perc_used_mem=$( get_perc_used_mem )
 
 # Verify calculations (for testing)
-echo $perc_used_mem
+echo Percent Usage: $perc_used_mem
 
 # used memory greater than or equal to critical threshold
 if [ "$perc_used_mem" -ge "$crit_thresh" ];
 then
-  notify_action
+  notify_action "$email_add"
   exit 2
 fi
 
@@ -99,47 +112,3 @@ fi
 # used memory less than warning threshold
 exit 0
 #=========END Main==========
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#TODO (if there's time) maybe modify above to accept percentages in the range of 0-100
-#and verify email through regular expression based on value@value.value expression
-
-# call Get_Mem
-
-# if (greater than $crit_thresh) or (equal to $crit_thresh and modulus is 0)
-#  call Send_Email
-#  exit 2
-
-# if (greater than $warn_thresh) or (equal to $warn_thresh and modulus is 0)
-#  exit 1
-
-#  exit 0
-
-
-
-
-#---------------
-# Sub-routines
-
-# Send_Email:
-# emailsubj=parse `date` command?
-# ps - find way to see all processes and sort in descending order
-# redirect this to temp file? then cat it to email body
-# use google smtp server, xmail?
-#function send_email() {
-#  ps
-#}

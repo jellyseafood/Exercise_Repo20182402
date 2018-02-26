@@ -1,0 +1,9 @@
+Initial basis:
+https://www.systutorials.com/1411/sending-email-from-mailx-command-in-linux-using-gmails-smtp/
+
+Also placed here my actual config (except password) which worked for my server
+*see file in same folder (should be ".mailrc" and placed with path "~/.mailrc" to be found by mailx)
+*credentials are not correct
+
+Sample How to execute:
+echo "The mail content" | mail -v -s "Checkthis" "nestor.gramata.jr@gmail.com"
