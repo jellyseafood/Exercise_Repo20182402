@@ -1,14 +1,19 @@
 puppet class:
 
-installs (in order)
-	vim
-	curl
-	git
+#installs (in order)
+#	vim
+#	curl
+#	git
+yum install vim
+yum install curl
+yum install git
 
-create a user
-	name: monitor
-	home_dir: /home/monitor
-	shell: bash
+#create a user
+#	name: monitor
+#	home_dir: /home/monitor
+#	shell: bash
+useradd <username>
+passwd <username>
 
 create directory: /home/monitor/scripts/
 	downloads memory_check from github
@@ -20,10 +25,15 @@ create directory: /home/monitor/scripts/
 create dir /home/monitor/src/
 	create soft link named my_memory_check
 	--this points to /home/monitor/scripts/memory_check
+mkdir -p
 
 create crontab entry
 	0,10,20,30,40,50 * * * * * /home/monitor/src/my_memory_check
   */10 * * * * * /home/monitor/src/my_memory_check
 
 Set time zone to PHT for server
+
+
 Set hostname to bpx.server.local
+/etc/sysconfig/network
+hostname <name>
