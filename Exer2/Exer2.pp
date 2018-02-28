@@ -63,6 +63,7 @@
     }
 
     #used -c 40 -w 30 -e nestor.gramata.jr@gmail.com for the script
+    #used lower values of -c and -w to increase the likelihood of receiving an email (for testing)
     #crontab sched every 10 mins
     cron { 'monitor_cron':
         ensure  => 'present',

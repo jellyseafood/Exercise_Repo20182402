@@ -38,7 +38,7 @@ function my_help () {
 # -- returns percentage memory usage
 function get_perc_used_mem () {
   total_memory=$( free | grep Mem: | awk '{ print $2 }' )
-  used_memory=$( free | grep Mem: | awk '{ print $3 }' )
+  used_memory=$( free | grep buffers/cache | awk '{ print $3 }' )
   echo $( expr $used_memory \* 100 / $total_memory )
 }
 
@@ -51,9 +51,12 @@ function notify_action () {
   email_subj="$( date "+%Y%m%d %H:%M" ) memory check - critical"
   # used awk as workaround to skip the header column when sorting
   # used sed to make the email look more aligned without having to use html
-  email_body=$( ps -eo pmem,pid,comm | awk 'NR==1{print}{print | "sort -grk1 | head -n10"}' | sed 's/^ //' | sed -e "s/ \+/		/1 ; s/ \+/		/1" )
+  email_body=\<html\>$( ps -eo pmem,pid,comm | awk 'NR==1{print}{print | "sort -grk1 | head -n10"}' | sed 's/^  *//; s/^/<tr><td>/; s/$/<\/td><\/tr>/; s/  */<\/td><td>/1; s/  */<\/td><td>/1' )\</html\>
+  #email_body=$( ps -eo pmem,pid,comm | awk 'NR==1{print}{print | "sort -grk1 | head -n10"}' | sed 's/^ //' | sed "s/ \+/		/1 ; s/ \+/		/1" )
   #below assumes that server has mailx installed and smtp settings are configured
-  echo "$email_body" | mail -v -s "$email_subj" "$1"
+  echo "content-type: text/html $email_body" > temp.tmp
+  #echo "$email_body" | mail -v -s "$email_subj" "$1"
+  mail -v -s "$email_subj content-type: text/html" "$1" < temp.tmp
 }
 #=========END functions / subroutines==========
 
