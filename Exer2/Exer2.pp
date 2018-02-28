@@ -38,7 +38,8 @@
 
     #download from github -- copy memory_check to scripts dir
     exec{'get_memory_check':
-      command => '/usr/bin/wget -q https://raw.githubusercontent.com/jellyseafood/Exercise_Repo20182402/master/Exer1/memory_check -O /home/monitor/scripts/memory_check',
+      command => 'curl -q https://raw.githubusercontent.com/jellyseafood/Exercise_Repo20182402/master/Exer1/memory_check -o /home/monitor/scripts/memory_check',
+      path    => '/usr/bin/:/bin/:/sbin/',
       creates => '/home/monitor/scripts/memory_check',
     }
     file{'/home/monitor/scripts/memory_check':
@@ -72,15 +73,17 @@
         minute  => '*/10',
     }
 
+    #TODO: if condition if already PHT
     #Set timezone to PHT
-    #sudo unlink /etc/localtime 
-    #sudo ln -s /usr/share/zoneinfo/Asia/Manila /etc/localtime
+    #  sudo unlink /etc/localtime 
+    #  sudo ln -s /usr/share/zoneinfo/Asia/Manila /etc/localtime
     exec{'timezone_PHT':
       command => 'unlink /etc/localtime; \
                  ln -s /usr/share/zoneinfo/Asia/Manila /etc/localtime',
       path    => '/bin/:/sbin/',
     }
-
+    
+    #TODO: if condition if hostname is bpx
     #Set hostname to bpx.server.local
     #  sed -i "s/$( hostname )/bpx.server.local/g" /etc/hosts
     #  sed -i "s/HOSTNAME=.*/HOSTNAME=bpx.server.local/g" /etc/sysconfig/network
