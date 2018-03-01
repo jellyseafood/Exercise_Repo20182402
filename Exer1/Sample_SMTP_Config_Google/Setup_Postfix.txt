@@ -1,6 +1,27 @@
+#generate certificate
+/etc/ssl/certs/make-dummy-cert
 
+#path to generated certificate to be used in config below
+/etc/ssl/certs/ca-bundle.crt
 
+#reference on how to config
+https://linode.com/docs/email/postfix/postfix-smtp-debian7/
 
+#fix for postfix restart
+sudo service postfix restart
+#did the double quotes solution
+https://www.linuxquestions.org/questions/linux-general-1/postfix-throwing-error-etc-init-d-postfix-line-73-%5B-%3D-unary-operator-expected-4175530339/
+====
+try doublequotes around "${NETWORKING}"
+-or-
+use [[ and ]] around expression
+====
+
+sendmail recipient@elsewhere.com
+From: you@example.com
+Subject: Test mail
+This is a test email
+.
 
 
 
