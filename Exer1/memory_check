@@ -1,9 +1,14 @@
 #!/bin/bash
 # Written By: Nestor B. Gramata Jr.
 # Created: 20180225
-# This program monitors server memory usage and notifies a user via email 
-#    only when utility is above set critical threshold
-# Program has 3 parameters:
+# This program monitors server memory usage and notifies via email 
+#    memory utility is above set critical threshold
+# Possible Exit Codes:
+#   1. 2: memory utilization equal to or greater than critical threshold
+#   2. 1: equal to or greater than warning threshold and less than critical threshold
+#   3. 0: below warning threshold
+#   3. 99: critical threshold is not greater than warning threshold or insufficient inputs
+# Program has 3 input parameters:
 #   1. -c: critical threshold (percentage)
 #   2. -w: warning threshold (percentage)
 #   3. -e: email address to notify  
@@ -50,13 +55,17 @@ function notify_action () {
   email_add=$1
   email_subj="$( date "+%Y%m%d %H:%M" ) memory check - critical"
   # used awk as workaround to skip the header column when sorting
-  # used sed to make the email look more aligned without having to use html
-  email_body=\<html\>$( ps -eo pmem,pid,comm | awk 'NR==1{print}{print | "sort -grk1 | head -n10"}' | sed 's/^  *//; s/^/<tr><td>/; s/$/<\/td><\/tr>/; s/  */<\/td><td>/1; s/  */<\/td><td>/1' )\</html\>
-  #email_body=$( ps -eo pmem,pid,comm | awk 'NR==1{print}{print | "sort -grk1 | head -n10"}' | sed 's/^ //' | sed "s/ \+/		/1 ; s/ \+/		/1" )
-  #below assumes that server has mailx installed and smtp settings are configured
-  echo "content-type: text/html $email_body" > temp.tmp
-  #echo "$email_body" | mail -v -s "$email_subj" "$1"
-  mail -v -s "$email_subj content-type: text/html" "$1" < temp.tmp
+  # used sed to turn formatting to html
+  email_body=\<html\>$( ps -eo pmem,pid,comm | \
+             awk 'NR==1{print}{print | "sort -grk1 | head -n10"}' | \
+             sed 's/^  *//; s/^/<tr><td>/; s/$/<\/td><\/tr>/;' | \
+             sed 's/  */<\/td><td>/1; s/  */<\/td><td>/1' )\</html\>
+  
+  #below code sends html email via Postfix 2.6.6
+  echo -e "To: $email_add\nSubject: $email_subj\nContent-Type: text/html\n$email_body" | sendmail "$email_add"
+  
+  #below code sends html email via Heirloom mailx 12.4
+  #echo $email_body | mail -s "$( echo -e "$email_subj\nContent-Type: text/html")" $email_add
 }
 #=========END functions / subroutines==========
 

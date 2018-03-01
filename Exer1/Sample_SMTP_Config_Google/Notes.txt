@@ -7,3 +7,7 @@ Also placed here my actual config (except password) which worked for my server
 
 Sample How to execute:
 echo "The mail content" | mail -v -s "Checkthis" "nestor.gramata.jr@gmail.com"
+
+Send HTML email:
+#ref: https://stackoverflow.com/questions/2591755/how-to-send-html-email-using-linux-command-line/12262421
+echo "<b>HTML Message goes here</b>" | mail -s "$(echo -e "This is the subject\nContent-Type: text/html")" foo@example.com

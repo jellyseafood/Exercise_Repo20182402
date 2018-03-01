@@ -23,7 +23,7 @@
       ensure     =>  'present',
       shell      =>  '/bin/bash',
       home       =>  '/home/monitor',
-      comment    =>  'used to run monitoring script',
+      comment    =>  'monitor',
       password   =>  '$6$jR3HJ38peVbpvJF3$P9G7k/y9ejPWfW2j/.r6dnvqx1x0vblINDGoRvIMFnqvFhU8j6B.itWCaX8dNR6GYvS59eo4VHRLPOz9ejUSz0',
       managehome =>  true,
     }
@@ -63,12 +63,12 @@
       target => '/home/monitor/scripts/memory_check',
     }
 
-    #used -c 40 -w 30 -e nestor.gramata.jr@gmail.com for the script
+    #used -c 20 -w 10 -e nestor.gramata.jr@gmail.com for the script
     #used lower values of -c and -w to increase the likelihood of receiving an email (for testing)
     #crontab sched every 10 mins
     cron { 'monitor_cron':
         ensure  => 'present',
-        command => '/home/monitor/src/my_memory_check -c 40 -w 30 -e nestor.gramata.jr@gmail.com',
+        command => '/home/monitor/src/my_memory_check -c 20 -w 10 -e nestor.gramata.jr@gmail.com',
         user    => 'monitor',
         minute  => '*/10',
     }
