@@ -1,0 +1,11 @@
+
+
+
+
+
+
+#verify mail status
+vi /var/spool/mail/monitor
+
+#verify cron runs
+vi /var/log/cron

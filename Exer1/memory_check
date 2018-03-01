@@ -62,7 +62,7 @@ function notify_action () {
              sed 's/  */<\/td><td>/1; s/  */<\/td><td>/1' )\</html\>
   
   #below code sends html email via Postfix 2.6.6
-  echo -e "To: $email_add\nSubject: $email_subj\nContent-Type: text/html\n$email_body" | sendmail "$email_add"
+  echo -e "To: $email_add\nSubject: $email_subj\nContent-Type: text/html\n$email_body" | /usr/sbin/sendmail "$email_add"
   
   #below code sends html email via Heirloom mailx 12.4
   #echo $email_body | mail -s "$( echo -e "$email_subj\nContent-Type: text/html")" $email_add
