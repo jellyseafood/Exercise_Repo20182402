@@ -23,7 +23,12 @@ Subject: Test mail
 This is a test email
 .
 
+#Important for google authentication (smtp) CentOS
+yum install cyrus-sasl-plain
+service postfix restart
 
+#verify smtp settings after sending email
+cat /var/log/maillog
 
 #verify mail status
 vi /var/spool/mail/monitor
