@@ -73,17 +73,16 @@
         minute  => '*/10',
     }
 
-    #TODO: if condition if already PHT
     #Set timezone to PHT
     #  sudo unlink /etc/localtime 
     #  sudo ln -s /usr/share/zoneinfo/Asia/Manila /etc/localtime
     exec{'timezone_PHT':
       command => 'unlink /etc/localtime; \
                  ln -s /usr/share/zoneinfo/Asia/Manila /etc/localtime',
-      path    => '/bin/:/sbin/',
+      path    => '/usr/bin/:/bin/:/sbin/',
+      onlyif  => 'test "$( readlink /etc/localtime )" != "/usr/share/zoneinfo/Asia/Manila"',
     }
     
-    #TODO: if condition if hostname is bpx
     #Set hostname to bpx.server.local
     #  sed -i "s/$( hostname )/bpx.server.local/g" /etc/hosts
     #  sed -i "s/HOSTNAME=.*/HOSTNAME=bpx.server.local/g" /etc/sysconfig/network
@@ -94,5 +93,6 @@
                  sed -i "s/HOSTNAME=.*/HOSTNAME=bpx.server.local/g" /etc/sysconfig/network; \
                  hostname bpx.server.local; \
                  service network restart',
-      path    => '/bin/:/sbin/',
+      path    => '/usr/bin/:/bin/:/sbin/',
+      onlyif  => 'test "$( hostname )" != "bpx.server.local"',
     }
