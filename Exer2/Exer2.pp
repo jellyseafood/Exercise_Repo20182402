@@ -2,23 +2,23 @@
 #Created: 20170228
 #Tested on CentOS 6.7 and 6.9
 
-    #install vim - used allow_virtual so Puppet resolves vim as package name for CentOS
+    #Install vim - used allow_virtual so Puppet resolves vim as package name for CentOS
     package { 'vim':
       ensure        => installed,
       allow_virtual => true,
     }
 
-    #install curl
+    #Install curl
     package { 'curl':
       ensure => installed,
     }
 
-    #install git
+    #Install git
     package { 'git':
       ensure => installed,
     }
 
-    #creds: monitor/df
+    #User Credential: monitor/df
     user { 'monitor':
       ensure     =>  'present',
       shell      =>  '/bin/bash',
@@ -28,7 +28,7 @@
       managehome =>  true,
     }
 
-    #create dir /home/monitor/scripts/
+    #Create dir /home/monitor/scripts/
     file { '/home/monitor/scripts/':
       ensure => 'directory',
       owner  => 'monitor',
@@ -36,7 +36,7 @@
       mode   => '0750',
     }
 
-    #download from github -- copy memory_check to scripts dir
+    #Download from github -- copy memory_check to scripts dir
     exec{'get_memory_check':
       command => 'curl -q https://raw.githubusercontent.com/jellyseafood/Exercise_Repo20182402/master/Exer1/memory_check -o /home/monitor/scripts/memory_check',
       path    => '/usr/bin/:/bin/:/sbin/',
@@ -49,7 +49,7 @@
       require => Exec['get_memory_check'],
     }
 
-    #create dir /home/monitor/src/
+    #Create dir /home/monitor/src/
     file { '/home/monitor/src/':
       ensure => 'directory',
       owner  => 'monitor',
@@ -57,15 +57,15 @@
       mode   => '0750',
     }
 
-    #create soft link named my_memory_check in src dir
+    #Create soft link named my_memory_check in src dir
     file { '/home/monitor/src/my_memory_check':
       ensure => 'link',
       target => '/home/monitor/scripts/memory_check',
     }
 
+    #Set crontab sched every 10 mins
     #used -c 20 -w 10 -e nestor.gramata.jr@gmail.com for the script
     #used lower values of -c and -w to increase the likelihood of receiving an email (for testing)
-    #crontab sched every 10 mins
     cron { 'monitor_cron':
         ensure  => 'present',
         command => '/home/monitor/src/my_memory_check -c 20 -w 10 -e nestor.gramata.jr@gmail.com',
@@ -74,8 +74,6 @@
     }
 
     #Set timezone to PHT
-    #  sudo unlink /etc/localtime 
-    #  sudo ln -s /usr/share/zoneinfo/Asia/Manila /etc/localtime
     exec{'timezone_PHT':
       command => 'unlink /etc/localtime; \
                  ln -s /usr/share/zoneinfo/Asia/Manila /etc/localtime',
@@ -84,10 +82,6 @@
     }
     
     #Set hostname to bpx.server.local
-    #  sed -i "s/$( hostname )/bpx.server.local/g" /etc/hosts
-    #  sed -i "s/HOSTNAME=.*/HOSTNAME=bpx.server.local/g" /etc/sysconfig/network
-    #  hostname bpx.server.local
-    #  service network restart
     exec{'hostname_change':
       command => 'sed -i "s/$( hostname )/bpx.server.local/g" /etc/hosts; \
                  sed -i "s/HOSTNAME=.*/HOSTNAME=bpx.server.local/g" /etc/sysconfig/network; \

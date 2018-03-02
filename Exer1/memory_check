@@ -13,7 +13,7 @@
 #   2. -w: warning threshold (percentage)
 #   3. -e: email address to notify  
 
-# clear the values of the following vars
+# Clear the values of the following vars
 unset crit_thresh
 unset warn_thresh
 unset email_add
@@ -91,7 +91,7 @@ while getopts 'c:w:e:' OPTION; do
   esac
 done
 
-# check for missing parameters or
+# Check for missing parameters or
 #   or if warning threshold is greater than or equal to critical threshold
 if [ -z "$crit_thresh" ] \
   || [ -z "$warn_thresh" ] \
@@ -108,19 +108,19 @@ perc_used_mem=$( get_perc_used_mem )
 # Verify calculations (for testing)
 echo Percent Usage: $perc_used_mem
 
-# used memory greater than or equal to critical threshold
+# Used memory greater than or equal to critical threshold
 if [ "$perc_used_mem" -ge "$crit_thresh" ];
 then
   notify_action "$email_add"
   exit 2
 fi
 
-# used memory greater than or equal to warning threshold
+# Used memory greater than or equal to warning threshold
 if [ "$perc_used_mem" -ge "$warn_thresh" ];
 then
   exit 1
 fi
 
-# used memory less than warning threshold
+# Used memory less than warning threshold
 exit 0
 #=========END Main==========
